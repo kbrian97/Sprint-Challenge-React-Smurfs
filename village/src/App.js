@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import axios from 'axios';
+import {Route, NavLink} from 'react-router-dom'
 
 
 import './App.css';
@@ -17,34 +18,28 @@ class App extends Component {
   // Notice what your map function is looping over and returning inside of Smurfs.
   // You'll need to make sure you have the right properties on state and pass them down to props.
   componentDidMount() {
-    axios
-      .get('http://localhost:3333/smurfs')
-      .then(res => this.setState({smurfs: res.data}))
-      .catch(err => console.log(err));
+   this.getSmurfs();
   }
 
-  addItem = (e, smurfs) => {
-    e.preventDefault();
-    axios
-      .post('http://localhost:3333/smurfs', smurfs)
-      .then(res => {
-        this.setState({
-          smurfs: res.data
-        });
-        // HTTP STEP V - Clear data form in ItemForm and route to /item-list
-        this.props.history.push('/smurfs-list');
-      })
-      .catch(err => {
-        console.log(err);
-      });
-  };
 
+  getSmurfs = () => {
+  axios
+  .get('http://localhost:3333/smurfs')
+  .then(res => this.setState({smurfs: res.data}))
+  .catch(err => console.log(err));
+  }
 
   render() {
     return (
       <div className="App">
-        <SmurfForm />
-        <Smurfs smurfs={this.state.smurfs} />
+        <div className="nav">
+          <NavLink to="/" exact> Home </NavLink>
+          <NavLink to="/addSmurf" >Add a Smurf</NavLink>
+          <NavLink to="/smurfs" >Smurfs</NavLink>
+        </div>
+        
+        <Route path="/addSmurf" render={props => <SmurfForm getSmurfs={this.getSmurfs} />}/>
+        <Route path="/smurfs" render={props => (<Smurfs smurfs={this.state.smurfs} />)}/>
       </div>
     );
   }
